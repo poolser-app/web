@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { getAddress, isAddress } from 'viem';
-import { formatPrice, range, usd } from './math.ts';
+import { feeTier, formatPrice, priceLabelCenter, range, tokenAmount, unclaimedLabel, usd } from './math.ts';
 import { loadPortfolio, totals } from './portfolio.ts';
 import { RpcError } from './rpc.ts';
 import { demoSnapshot } from './demo.ts';
+import { ethereumArtwork, NetworkAvatar, TokenAvatar } from './Avatar.tsx';
 import { publicProvider } from './contracts.ts';
 import { applyTheme } from './theme.ts';
 import type { Theme } from './theme.ts';
@@ -16,7 +17,6 @@ function rememberedWallet(): string {
   catch { return ''; }
 }
 const short = (address: string) => `${address.slice(0, 6)}…${address.slice(-4)}`;
-const tokenAmount = (n: number | null) => n === null ? '—' : n === 0 ? '0' : n.toLocaleString('en-US', { maximumSignificantDigits: 8 });
 const historyHelp = 'Claimed fee history is not available. Unknown fees are not treated as zero.';
 const aprHelp = 'Realized APR is unavailable until opening dates and claimed fees are available. It is not a forecast.';
 
@@ -41,48 +41,42 @@ function Crest() {
   </div>;
 }
 
-function TokenIcon({ symbol, address }: { symbol: string; address: string }) {
-  const eth = address.toLowerCase() === '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' || address === '0x0000000000000000000000000000000000000000';
-  const usdc = address.toLowerCase() === '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
-  return <span className={`token-icon ${eth ? 'eth' : usdc ? 'usdc' : 'generic'}`} aria-hidden="true">{eth ? <svg viewBox="0 0 32 32"><path fill="#8C919B" d="m16 2-9 14 9 5 9-5z"/><path fill="#343A43" d="M16 2v19l9-5z"/><path fill="#8C919B" d="m7 18 9 13 9-13-9 5z"/><path fill="#343A43" d="M16 23v8l9-13z"/></svg> : usdc ? <svg viewBox="0 0 32 32" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round"><path d="M10 6a12 12 0 0 0 0 20M22 6a12 12 0 0 1 0 20M20 11c-1-3-8-3-8 1 0 5 8 2 8 7 0 4-7 4-8 1M16 7v3m0 12v3"/></svg> : symbol.slice(0, 2).toUpperCase()}</span>;
-}
-
 function HelpMetric({ label, explanation }: { label: string; explanation: string }) {
   const [open, setOpen] = useState(false);
   return <><button className="metric" aria-label={`${label}: unavailable. Show explanation`} onClick={() => setOpen(true)}><span>{label} <Icon name="info"/></span><strong>—</strong></button>{open && <Modal title={label} onClose={() => setOpen(false)}><p className="explanation">{explanation}</p></Modal>}</>;
 }
 
-function PositionCard({ position: p, demo }: { position: Position; demo?: boolean }) {
+export function PositionCard({ position: p, demo }: { position: Position; demo?: boolean }) {
   const r = range(p);
   const [details, setDetails] = useState(false);
-  const noFees = p.fees0 === 0 && p.fees1 === 0;
-  const feeLabel = noFees ? 'No unclaimed fees' : p.feesUSD !== null ? `${p.feesUSD > 0 ? '+' : ''}${usd(p.feesUSD)} fees` : p.fees0 !== null && p.fees1 !== null ? `${tokenAmount(p.fees0)} ${p.token0.symbol} + ${tokenAmount(p.fees1)} ${p.token1.symbol} fees` : 'Fees unavailable';
+  const feeLabel = unclaimedLabel(p);
   const knownFees = p.fees0 !== null && p.fees1 !== null;
-  const fee = p.fee & 0x800000 ? 'Dynamic fee' : `${p.fee / 10000}%`;
+  const fee = feeTier(p.fee);
   const hasPair = p.token0.decimals !== null || p.token1.decimals !== null;
-  const base = r.base === p.token0.symbol ? p.token0 : p.token1;
+  const base = r.inverted ? p.token1 : p.token0;
   const quote = base === p.token0 ? p.token1 : p.token0;
   const priceBadge = useRef<HTMLSpanElement>(null);
-  const [badgeWidth, setBadgeWidth] = useState(0);
+  const [badgeSize, setBadgeSize] = useState({ width: 0, height: 0, track: 0 });
   useEffect(() => {
     const node = priceBadge.current;
     if (!node) return;
-    const observer = new ResizeObserver(() => setBadgeWidth(node.getBoundingClientRect().width));
-    observer.observe(node); return () => observer.disconnect();
+    const track = node.parentElement!;
+    const observer = new ResizeObserver(() => { const box = node.getBoundingClientRect(); setBadgeSize({ width: box.width, height: box.height, track: track.getBoundingClientRect().width }); });
+    observer.observe(node); observer.observe(track); return () => observer.disconnect();
   }, [r.current]);
   return <article className={`position ${r.status}`} aria-label={`${hasPair ? `${r.base}/${r.quote}` : 'Unread position'}, Uniswap v${p.version}, ${r.title}`}>
     <header className="position-header">
-      <div className="position-identity"><div className="token-pair"><TokenIcon symbol={base.symbol} address={base.address}/><TokenIcon symbol={quote.symbol} address={quote.address}/><span className="chain-icon" aria-hidden="true">◆</span></div><div><h3 className="pair">{hasPair ? `${r.base}/${r.quote}` : 'Position unavailable'}</h3><p className="caption">Ethereum · v{p.version} · {fee}</p></div></div>
-      <div className="position-value"><strong>{usd(p.valueUSD)}</strong><span className={noFees || !knownFees ? 'quiet' : 'fee-amount'}>{feeLabel}</span></div>
+      <div className="position-identity"><div className="token-pair"><TokenAvatar token={base} chainId={ethereumArtwork.id} demo={demo}/><TokenAvatar token={quote} chainId={ethereumArtwork.id} demo={demo}/><NetworkAvatar name={ethereumArtwork.name} iconURL={ethereumArtwork.iconURL} demo={demo}/></div><div><h3 className="pair">{hasPair ? `${r.base}/${r.quote}` : 'Position unavailable'}</h3><p className="caption">Ethereum · v{p.version} · {fee}</p></div></div>
+      <div className="position-value"><strong>{usd(p.valueUSD)}</strong><span className={knownFees && (p.feesUSD ?? 0) > 0 ? 'fee-amount' : 'quiet'}>{feeLabel}</span></div>
     </header>
     <div className="range-heading"><span>Price range · {r.quote}</span><span className="status"><b aria-hidden="true">●</b> {r.title}</span></div>
-    <div className="price-label-track" aria-label={`Current price ${formatPrice(r.current)} ${r.quote} per ${r.base}`}>
-      {r.marker !== null && r.current !== null ? <span className="price-badge" ref={priceBadge} style={{ left: `clamp(${badgeWidth / 2}px, ${r.marker * 100}%, calc(100% - ${badgeWidth / 2}px))` }}>{formatPrice(r.current)} {r.quote}</span> : <span className="quiet">Current price unavailable</span>}
+    <div className="price-label-track" style={{ height: Math.max(34, badgeSize.height + 6) }} role="img" aria-label={r.current === null ? "Current price unavailable" : `Current price ${formatPrice(r.current)} ${r.quote} per ${r.base}${r.clamped ? ". Price is beyond the displayed scale" : ""}`}>
+      {r.marker !== null && r.current !== null ? <span className="price-badge" ref={priceBadge} style={{ left: priceLabelCenter(r.marker, badgeSize.width, badgeSize.track) }}>{formatPrice(r.current)} {r.quote}</span> : <span className="quiet">Current price unavailable</span>}
     </div>
-    <div className="range-track" aria-hidden="true">
+    {r.marker !== null && r.current !== null && <div className="range-track" aria-hidden="true">
       <span className="range-band" style={{ left: `${r.bandStart * 100}%`, width: `${(r.bandEnd - r.bandStart) * 100}%` }}/>
       <span className="range-tick" style={{ left: `${r.bandStart * 100}%` }}/><span className="range-tick" style={{ left: `calc(${r.bandEnd * 100}% - 1px)` }}/>
-      {r.marker !== null && <span className="range-marker" style={{ left: `clamp(0px, calc(${r.marker * 100}% - 1.5px), calc(100% - 3px))` }}/>}</div>
+      {r.marker !== null && <span className="range-marker" style={{ left: `clamp(0px, calc(${r.marker * 100}% - 1.5px), calc(100% - 3px))` }}/>}</div>}
     <div className="range-bounds"><span>Min <strong>{formatPrice(r.min)}</strong></span><span>Max <strong>{formatPrice(r.max)}</strong></span></div>
     {r.distance && <p className="distance">{r.distance.endsWith('below') ? '↙' : '↗'} {r.distance} range</p>}
     {!!p.errors.length && <ul className="read-errors">{p.errors.map(error => <li key={error}>{error}</li>)}</ul>}

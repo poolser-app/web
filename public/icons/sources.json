@@ -1,0 +1,21 @@
+{
+  "nativeReference": "7c1e0ab22bc952626d7dd18de14645c07ecacad6",
+  "purpose": "Pinned demo artwork; separate from the shared Poolser brand assets.",
+  "files": [
+    {
+      "path": "weth.webp",
+      "source": "https://token-icons.llamao.fi/icons/tokens/1/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2?h=128&w=128",
+      "sha256": "1d35a5b299af704b9862614e2b15ad1f158d439403c6cfb61ae1ea628a7194e1"
+    },
+    {
+      "path": "usdc.webp",
+      "source": "https://token-icons.llamao.fi/icons/tokens/1/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48?h=128&w=128",
+      "sha256": "982f6c344f34410fc7b60f1c871337404b867eac7521549d55c0d38b442963c0"
+    },
+    {
+      "path": "ethereum.png",
+      "source": "https://coin-images.coingecko.com/asset_platforms/images/279/large/ethereum.png",
+      "sha256": "fdd0c1cdb96e9af20b917ebb30a90c557520d048468c1c9f905db7980a2a2f4b"
+    }
+  ]
+}

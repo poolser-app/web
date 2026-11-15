@@ -24,15 +24,19 @@ The v3 reference had three funded positions with readable pool state and simulat
 
 ## Browser checks
 
-The local Vite app is tested in the in-app WebKit browser. Desktop light/dark and 390px mobile layouts use the shared original artwork/tokens. The mobile summary stacks without splitting money values. Choosing demo focuses the portfolio on small screens; Position Details opens/closes with Enter; invalid address submission gives a visible alert. Demo uses two fictional positions, one in range and one out of range.
+The local Vite app is tested in the in-app WebKit browser. Following native UI review, the interface uses the same fees-first summary, compact toolbar, native labels, token-pair identity and blue current-price badge. Original shared artwork/tokens remain pinned. Invented slogans and the persistent setup sidebar have been removed.
 
-A real public dRPC browser read completed at block **26420593** with **one funded v4 position**, readable holdings, nonzero fees, USD value and labelled range. The UI showed **Read complete**. CoinGecko failed in the browser and DefiLlama supplied the fallback price; the notice remained visible. Pausing an in-progress scan produced the explicit partial state. After reload, the wallet was remembered and discovery resumed from saved progress to completion. A fictional key entered without submitting any request disappeared after reload; no real credentials were used. The sample scan checkpoint was cleared after QA.
+The UI revision was checked at desktop, 390px and 320px widths in light/dark mode. Tests cover attention filtering, sort selection, keyboard activation of Details/explanations, Escape dismissal and Settings cancellation restoring edited fields. Wallet/Infura have one visible field heading each, with hidden accessible labels. Price badges remain inside their tracks; money values do not split across lines. No fee history, APR or water level is fabricated.
+
+A real public dRPC browser read completed at block **26420593** with **one funded v4 position**, readable holdings, nonzero fees, USD value and labelled range. CoinGecko failed and DefiLlama supplied the fallback price; the notice remained visible. Pausing produced an explicit partial state; reload remembered the wallet and resumed saved discovery to completion. A fictional key entered without submitting a request disappeared after reload; no real credentials were used. The sample scan checkpoint was cleared after QA. These transport/math checks remain unchanged by the UI revision. After moving settings into a dialog, Save and toolbar Refresh were also checked against public RPC for an empty nonzero test address: both returned known-zero totals and No active positions found. A reverting zero-address ownership read remained partial/unavailable rather than becoming an empty portfolio.
 
 Screenshots contain fictional demo data and blank address/credential inputs:
 
 - [Light desktop](screenshots/demo-light.jpg)
 - [Dark desktop](screenshots/demo-dark.jpg)
 - [Mobile](screenshots/demo-mobile.jpg)
+- [Settings](screenshots/settings.jpg)
+- [Position details](screenshots/position-details.jpg)
 
 ## Provider behaviour and limits
 

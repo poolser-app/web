@@ -6,8 +6,8 @@ Audit baseline: [native 7c1e0ab](https://github.com/poolser-app/native/tree/7c1e
 | --- | --- | --- |
 | 1 | Original token/network artwork, stable fallbacks/cache, native fee/price/amount presentation, accessible clamped ranges and long labels | [#8](https://github.com/poolser-app/web/issues/8) — implemented on this branch; review pending |
 | 2 | Every native-supported chain/version, prices/native assets, enabled networks, global request budget and isolated/stale chain state | [#2](https://github.com/poolser-app/web/issues/2) |
-| 3 | Named/reordered wallets, All Wallets allocation/cards/navigation, persisted snapshots, full filters/sorts, hide/restore/copy/context actions | [#3](https://github.com/poolser-app/web/issues/3) |
-| 4 | Pool references, 24h Volume/TVL/estimated yield, complete Assets/Position details and responsive Open in Uniswap action | [#9](https://github.com/poolser-app/web/issues/9) |
+| 3 | Pool references, 24h Volume/TVL/estimated yield, Assets/Position details and responsive Open in Uniswap action; later #4 supplies real dates/returns | [#9](https://github.com/poolser-app/web/issues/9) |
+| 4 | Named/reordered wallets, All Wallets allocation/cards/navigation, persisted snapshots, full filters/sorts, hide/restore/copy/context actions | [#3](https://github.com/poolser-app/web/issues/3) |
 | 5 | Opening dates, v3 claimed scans, v4 observations, 7/14/30D and Today charts, daily mini bars, realized/weighted APR and eligible pool-level values | [#4](https://github.com/poolser-app/web/issues/4) |
 | 6 | Original crest/eyes entrance/blinks, linear fee water and pouring/settling, reduced motion and visibility cancellation | [#10](https://github.com/poolser-app/web/issues/10) |
 | 7 | Refresh/RPC/log settings, lifecycle/offline/reconnect, claimed tracking, theme/preferences, optional range alerts and sanitized diagnostics | [#11](https://github.com/poolser-app/web/issues/11) |

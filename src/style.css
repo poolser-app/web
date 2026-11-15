@@ -1,0 +1,178 @@
+* { box-sizing: border-box; }
+:root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--primaryText); background: var(--popover); font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; min-width: 320px; }
+button, input, select { font: inherit; }
+button, a, select { -webkit-tap-highlight-color: transparent; }
+button, select, summary { cursor: pointer; }
+button:disabled { cursor: default; opacity: .45; }
+a { color: inherit; text-underline-offset: 3px; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid var(--barToday); outline-offset: 3px; }
+button { border: 0; }
+p, h1, h2, h3 { margin: 0; }
+.app-shell { max-width: 688px; margin: 20px auto; padding: 0 20px; }
+.app-header { min-height: 64px; display: flex; align-items: center; gap: 12px; padding: 8px 4px 16px; }
+.wordmark { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; font: 600 23px "Avenir Next", Avenir, system-ui, sans-serif; letter-spacing: -.4px; }
+.wordmark img { object-fit: contain; filter: drop-shadow(0 1px 3px #153d4720); }
+.wallet-badge { font: 600 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--secondaryText); background: var(--control); border-radius: 20px; padding: 6px 10px; }
+.header-tools { margin-left: auto; display: flex; gap: 8px; }
+.icon-button { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; color: var(--secondaryText); background: var(--control); }
+.icon-button svg { width: 22px; height: 22px; }
+#portfolio { min-width: 0; outline: none; }
+.portfolio-summary { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--cardLine); border-radius: 20px; padding: 76px 20px 18px; }
+.crest { height: 62px; position: absolute; top: 0; left: 0; right: 0; pointer-events: none; }
+.crest svg { display: block; width: 100%; height: 100%; }
+.eyes { display: flex; position: absolute; left: 22px; top: 7.5px; gap: 2.971px; width: 52px; height: 30.903px; }
+.eyes i { display: block; width: 24.514px; height: 30.903px; border-radius: 50%; background-image: url('/brand/PoolserCharacter.png'); background-size: 76.069px 76.069px; background-position: -11.886px -22.731px; }
+.eyes i + i { background-position: -39.371px -22.731px; }
+.summary-metrics { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: 16px 24px; }
+.summary-metrics p { font-size: 13px; color: var(--secondaryText); margin-bottom: 5px; }
+.summary-metrics > div { max-width: 100%; }
+.summary-metrics strong { overflow-x: auto; display: block; font-family: "Avenir Next", Avenir, system-ui, sans-serif; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.summary-fees strong { font-size: 42px; letter-spacing: -.8px; }
+.summary-value { margin-left: auto; text-align: right; }
+.summary-value strong { font-size: 29px; letter-spacing: -.6px; }
+.partial-note { font-size: 12px; line-height: 1.6; color: var(--secondaryText); margin-top: 12px; }
+.summary-stats { display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid var(--cardLine); padding-top: 12px; margin-top: 20px; }
+.metric { text-align: left; color: var(--primaryText); background: none; padding: 0; min-height: 44px; }
+.metric > span { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--secondaryText); }
+.metric svg { width: 12px; height: 12px; }
+.metric strong { display: block; margin-top: 5px; font: 600 19px "Avenir Next", Avenir, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+.notices { margin-top: 12px; color: var(--secondaryText); font-size: 12px; line-height: 1.6; border-left: 2px solid var(--nearEdge-tint); padding-left: 12px; }
+.notices p + p { margin-top: 8px; }
+.position-controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin: 14px 0 12px; }
+.position-controls > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip, .position-controls select { min-height: 32px; padding: 5px 10px; font-size: 12px; font-weight: 600; border: 1px solid var(--cardLine); border-radius: 16px; background: var(--card); color: var(--secondaryText); }
+.select-control { position: relative; display: inline-flex; align-items: center; color: var(--secondaryText); }
+.select-control select { appearance: none; -webkit-appearance: none; padding-right: 34px; }
+.select-control > svg { position: absolute; right: 11px; width: 13px; height: 13px; pointer-events: none; }
+.chip.selected { background: var(--strong); color: var(--onStrong); border-color: var(--strong); }
+.chip.attention { border-color: var(--outOfRange-bandEdge); color: var(--outOfRange-tint); background: var(--outOfRange-background); }
+.chip.attention.selected { outline: 2px solid var(--outOfRange-tint); outline-offset: 1px; }
+.positions { display: grid; gap: 12px; }
+.position { --statusTint: var(--inRange-tint); --statusBackground: var(--inRange-background); --statusBand: var(--inRange-bandFill); --statusEdge: var(--inRange-bandEdge); border: 1px solid var(--cardLine); border-radius: 18px; background: var(--card); padding: 18px; min-width: 0; }
+.position.outOfRange { --statusTint: var(--outOfRange-tint); --statusBackground: var(--outOfRange-background); --statusBand: var(--outOfRange-bandFill); --statusEdge: var(--outOfRange-bandEdge); }
+.position.nearEdge { --statusTint: var(--nearEdge-tint); --statusBackground: var(--nearEdge-background); --statusBand: var(--nearEdge-bandFill); --statusEdge: var(--nearEdge-bandEdge); }
+.position.fullRange { --statusTint: var(--fullRange-tint); --statusBackground: var(--fullRange-background); --statusBand: var(--fullRange-bandFill); --statusEdge: var(--fullRange-bandEdge); }
+.position.unknown { --statusTint: var(--unknown-tint); --statusBackground: var(--unknown-background); --statusBand: var(--unknown-bandFill); --statusEdge: var(--unknown-bandEdge); }
+.position-header { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+.position-identity { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.token-pair { display: flex; position: relative; padding-right: 4px; flex-shrink: 0; }
+.token-icon { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--card); box-shadow: 0 0 0 1px var(--hairline); }
+.token-icon + .token-icon { margin-left: -10px; }
+.token-icon.eth { background: #F1F2F8; }
+.token-icon.usdc { background: #2775CA; }
+.token-icon.generic { background: var(--control); font: 600 11px "Avenir Next", system-ui, sans-serif; }
+.token-icon svg { width: 26px; height: 26px; }
+.chain-icon { position: absolute; bottom: -4px; right: -2px; display: grid; place-items: center; height: 15px; width: 15px; background: #627EEA; color: white; border: 1px solid var(--card); border-radius: 50%; font-size: 10px; }
+.pair { font: 600 18px "Avenir Next", Avenir, system-ui, sans-serif; letter-spacing: -.25px; overflow-wrap: anywhere; }
+.caption { font-size: 12px; color: var(--secondaryText); margin-top: 2px; line-height: 1.5; }
+.position-value { text-align: right; margin-left: auto; min-width: 0; max-width: 100%; }
+.position-value > strong { overflow-x: auto; display: block; font: 600 21px "Avenir Next", Avenir, system-ui, sans-serif; letter-spacing: -.4px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.position-value > span { display: block; font-size: 12px; font-weight: 600; line-height: 1.5; margin-top: 3px; overflow-wrap: anywhere; max-width: 280px; }
+.fee-amount { color: var(--fees); }
+.quiet { color: var(--secondaryText); font-weight: 400 !important; }
+.range-heading, .range-bounds { display: flex; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; }
+.range-heading { align-items: center; font-size: 12px; color: var(--secondaryText); font-weight: 600; }
+.status { display: inline-flex; align-items: center; gap: 5px; color: var(--statusTint); background: var(--statusBackground); padding: 4px 8px; border-radius: 12px; font-size: 11px; }
+.status b { font-size: 8px; }
+.price-label-track { position: relative; height: 34px; margin-top: 9px; font-size: 12px; }
+.price-badge { position: absolute; transform: translateX(-50%); padding: 5px 8px; max-width: 100%; background: var(--barToday); color: var(--onBarToday); border-radius: 7px; font-size: 12px; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.range-track { height: 22px; position: relative; }
+.range-track::before { content: ''; position: absolute; width: 100%; height: 3px; top: 10px; background: var(--track); border-radius: 9px; }
+.range-band { position: absolute; height: 10px; top: 6px; background: var(--statusBand); border-radius: 20px; }
+.range-tick { position: absolute; top: 4px; width: 1px; height: 14px; background: var(--statusEdge); }
+.range-marker { position: absolute; top: 0; height: 22px; width: 3px; border-radius: 4px; background: var(--barToday); }
+.range-bounds { margin-top: 7px; font-size: 12px; color: var(--secondaryText); }
+.range-bounds strong { margin-left: 4px; font-weight: 500; color: var(--primaryText); font-variant-numeric: tabular-nums; }
+.distance { font-size: 12px; color: var(--statusTint); font-weight: 600; margin-top: 10px; }
+.read-errors { padding: 12px 12px 12px 26px; background: var(--outOfRange-background); color: var(--outOfRange-tint); font-size: 12px; line-height: 1.6; border-radius: 10px; margin: 12px 0 0; }
+.position-footer { border-top: 1px solid var(--hairline); margin-top: 14px; padding-top: 10px; display: flex; align-items: center; gap: 24px; }
+.details-button { display: grid; place-items: center; color: var(--secondaryText); margin-left: auto; background: none; min-height: 36px; min-width: 36px; border-radius: 8px; }
+.details-button svg { width: 17px; height: 17px; }
+.empty-positions { border: 1px solid var(--cardLine); border-radius: 18px; padding: 28px; text-align: center; font-size: 13px; line-height: 1.7; }
+.empty-positions h2 { font-size: 15px; font-weight: 500; }
+.empty-positions p { color: var(--secondaryText); margin-top: 8px; }
+.app-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 4px 8px; font-size: 12px; color: var(--secondaryText); }
+.app-footer > span { display: flex; align-items: center; gap: 8px; }
+.app-footer i { width: 6px; height: 6px; border-radius: 50%; background: var(--fees); flex-shrink: 0; }
+.app-footer .stale i { background: var(--nearEdge-tint); }
+.app-footer a { text-decoration: none; padding: 8px 0; }
+.prototype-note { color: var(--secondaryText); font-size: 10px; line-height: 1.6; padding: 0 4px; }
+.prototype-note span { display: block; }
+.setup-card { background: var(--card); border: 1px solid var(--cardLine); border-radius: 18px; padding: 24px; max-width: 460px; margin: 12px auto; }
+.setup-card h1 { font: 600 22px "Avenir Next", Avenir, system-ui, sans-serif; margin-bottom: 24px; }
+fieldset { border: 0; border-bottom: 1px solid var(--hairline); padding: 0 0 18px; margin: 0 0 18px; min-width: 0; }
+legend { font-size: 14px; font-weight: 600; padding: 0 0 12px; }
+form label { display: block; font-size: 12px; margin-bottom: 8px; }
+form input { display: block; width: 100%; height: 44px; border: 1px solid var(--cardLine); border-radius: 10px; background: var(--popover); padding: 0 12px; color: var(--primaryText); min-width: 0; }
+#wallet { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+input::placeholder { color: var(--secondaryText); opacity: .8; }
+.field-note { font-size: 12px; line-height: 1.5; color: var(--secondaryText); margin: 8px 0 12px; }
+.provider-option { display: flex; align-items: center; gap: 8px; color: var(--secondaryText); margin: 8px 0 0; min-height: 32px; }
+.provider-option input { width: 16px; height: 16px; margin: 0; accent-color: var(--fees); }
+.network-row, .appearance-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+.network-check { color: var(--fees); }
+.appearance-row select { border: 1px solid var(--cardLine); border-radius: 8px; background: var(--popover); color: var(--primaryText); min-height: 36px; padding: 4px 34px 4px 10px; }
+.settings-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.primary-button, .secondary-button { min-height: 44px; flex: 1; border-radius: 10px; padding: 10px 16px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.primary-button { color: var(--onStrong); background: var(--strong); }
+.secondary-button { color: var(--primaryText); background: var(--control); }
+.text-button { background: transparent; color: var(--secondaryText); padding: 8px; font-size: 12px; min-height: 36px; }
+.form-error { color: var(--outOfRange-tint); background: var(--outOfRange-background); border-radius: 10px; font-size: 12px; line-height: 1.6; margin-top: 12px; padding: 12px; overflow-wrap: anywhere; }
+.load-status { font-size: 12px; line-height: 1.6; color: var(--secondaryText); }
+.load-status:not(:empty) { margin-top: 12px; padding: 12px; background: var(--control); border-radius: 12px; }
+.progress-heading { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+.load-status progress { width: 100%; height: 5px; margin: 10px 0 4px; accent-color: var(--fees); }
+.load-status small { display: block; font-size: 11px; }
+.data-settings { border-top: 1px solid var(--hairline); margin-top: 20px; padding-top: 16px; color: var(--secondaryText); font-size: 12px; line-height: 1.6; }
+.data-settings summary { min-height: 32px; }
+.data-settings p { margin: 8px 0; }
+dialog { width: min(460px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); overflow: auto; padding: 20px; border: 1px solid var(--cardLine); border-radius: 18px; background: var(--card); color: var(--primaryText); box-shadow: 0 16px 64px #10262d30; }
+dialog::backdrop { background: #10262d66; }
+.dialog-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; }
+.dialog-header h2 { font: 600 18px "Avenir Next", Avenir, system-ui, sans-serif; }
+.dialog-header .text-button { color: var(--barToday); }
+.explanation { font-size: 14px; line-height: 1.6; }
+.balance-tiles { display: flex; flex-wrap: wrap; gap: 12px; }
+.balance-tiles > div { background: var(--popover); padding: 12px; border-radius: 12px; min-width: min(150px, 100%); flex: 1; }
+.balance-tiles span { display: block; font-size: 12px; color: var(--secondaryText); }
+.balance-tiles strong { display: block; margin-top: 6px; font: 600 22px "Avenir Next", Avenir, system-ui, sans-serif; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+dl { margin: 20px 0 0; font-size: 12px; }
+dl > div { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; margin-top: 12px; }
+dt { color: var(--secondaryText); }
+dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.uniswap-link { display: block; text-align: center; text-decoration: none; margin-top: 20px; }
+.skip-link { position: absolute; top: -100px; left: 20px; background: var(--strong); color: var(--onStrong); padding: 12px; z-index: 10; border-radius: 10px; }
+.skip-link:focus { top: 8px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (hover: hover) { button:not(:disabled):hover { filter: brightness(.96); } }
+@media (max-width: 480px) {
+  .app-shell { padding: 0 12px; margin: 8px auto; }
+  .app-header { gap: 8px; padding: 8px 2px 12px; }
+  .wordmark { font-size: 20px; gap: 6px; }
+  .wordmark img { width: 25px; height: 25px; }
+  .wallet-badge { padding: 5px 7px; font-size: 10px; }
+  .header-tools { gap: 5px; }
+  .icon-button { width: 36px; height: 36px; }
+  .portfolio-summary { padding: 72px 16px 14px; }
+  .summary-fees strong { font-size: 34px; }
+  .summary-value strong { font-size: 24px; }
+  .summary-metrics { gap: 14px; }
+  .position { padding: 14px; }
+  .pair { font-size: 16px; }
+  .caption { font-size: 11px; }
+  .position-value > strong { overflow-x: auto; font-size: 18px; }
+  .position-value > span { font-size: 11px; }
+  .position-footer { gap: 18px; }
+  .metric > span { font-size: 11px; }
+  .setup-card { padding: 18px; }
+}
+@media (max-width: 359px) {
+  .wallet-badge { max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wordmark { font-size: 18px; }
+  .summary-value { margin-left: 0; text-align: left; }
+  .summary-metrics { flex-direction: column; }
+  .position-header { flex-direction: column; }
+  .position-value { margin-left: 0; text-align: left; }
+}

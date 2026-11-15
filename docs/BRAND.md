@@ -1,0 +1,37 @@
+# Poolser web implementation reference
+
+Read the [pinned shared brand guide](brand/BRAND.md) first. [manifest.json](brand/manifest.json) records the adopted brand commit and SHA-256 hashes. Original logo/character files live in `public/brand/`; `src/brand/colors.json` is the local token copy. Shared identity changes originate in poolser-app/brand and are adopted explicitly. Builds and page rendering fetch no mutable brand assets or fonts.
+
+## Native application parity
+
+The browser application follows the native product, especially `PortfolioSummaryCard`, `GraphitePositionCard`, `PoolBrandRibbon` and the compact popover captures in [poolser-app/native](https://github.com/poolser-app/native/tree/main/docs/screenshots/redesign). Read the actual components and captures before changing their web counterparts. The website owns marketing; the application uses native product vocabulary and financial hierarchy. Do not invent slogans, hero headings or a different product voice for the browser.
+
+Use a compact, centred single-column workspace (648px of content on desktop) that becomes edge-to-edge with small insets on mobile. The toolbar contains the original brand mark, Poolser, the wallet badge, Refresh and Settings. Configuration appears on first use and subsequently in a Settings dialog. Do not keep an explanatory setup column beside the portfolio. Lead the summary with **Unclaimed fees** in large primary ink, **Total value** smaller on the right, then **Claimed**, **Pool level** and **APR**. Unknown history-derived metrics show a dash with an accessible explanation. Do not invent a fee chart or water level before history is available.
+
+Use one visible label per form field. Wallet and Infura are their section labels; do not repeat them as subheadings above the input and again in its placeholder. Keep explicit screen-reader labels visually hidden where the section already labels the field. Wallet uses `0x…`; the Infura field uses `API key`. Keep only explanatory text that adds information, such as key lifetime, provider choice or unavailable data. Demo is identified by the wallet badge and fictional-data status; do not add another demo headline above the summary.
+
+Native labels stay consistent: **Refresh**, **Settings**, **Save**, **All**, **Needs attention**, **Sort: Value**, **Sort: Fees**, **Price range · [quote]**, **Min**, **Max**, **Claimed**, **APR since open**, **Position details**, **Open in Uniswap**. Browser-only storage/provider guidance describes the actual web behaviour rather than copying native Keychain claims.
+
+## Typography and geometry
+
+Use the shared porcelain/deep-pool canvas, white/petrol surfaces, primary ink, jade earnings, blue current-price marker and rose attention tokens. Avenir Next/Avenir/system fonts carry the wordmark, pair names and tabular amounts; platform system text is used for labels and controls, monospace for the entered address. Select controls reserve space for one inset chevron, with the same spacing in Sort and Appearance; do not combine a native arrow with a second custom arrow. Cards use 18–20px corners, 14–20px insets, quiet hairlines and compact vertical spacing. Keep financial amounts on one line; wrap their containing rows on narrow screens or with enlarged text, and allow an exceptionally long amount to scroll inside its own value instead of changing its value.
+
+Soft Crest uses the native mirrored curve, exact blue/teal/green stop locations, satin highlight and original eye crop at the native 52px size. Keep the original pupils, gaze and proportions. The crest remains static and decorative in this prototype; it is not a return metric. There are no decorative motion loops or layout transitions. Pair avatars identify locally recognised Ethereum WETH/ETH and USDC by address with inline vector marks; unknown tokens have a quiet symbol fallback. No third-party icons are requested.
+
+## Financial presentation
+
+Position cards follow the native header: paired token avatars, pair without spaced separators, chain/version/fee, value and unclaimed fees. Known positive fees use the native `+$… fees` form; known zero reads **No unclaimed fees**; positive USD dust reads **+<$0.01 fees**. Unreadable fees remain unavailable. Keep known token amounts when USD prices are missing.
+
+Use the native **Price range · [quote]** heading and status pill. The blue current-price badge follows the marker, measures its rendered width and clamps at the track edges without shortening its number. The marker retains its original position. Preserve native quote priority, logarithmic tick geometry, inclusive lower/exclusive upper bound, 3% near-edge threshold, full-range detection, Min/Max precision and visible out-of-range direction/distance. Keep both range-bound ticks. Status is never conveyed by colour alone.
+
+The footer has **Claimed**, **APR since open** and a compact info-circle Details action. History metrics remain unknown until the history milestone; explanation buttons work by click, keyboard and touch. Daily fee bars stay absent without history. The Details dialog shows token holdings, position ID and raw unclaimed token amounts, with a separate Open in Uniswap action for real positions. Keep read errors visible on the main card, outside Details.
+
+ERC-20 metadata failures never guess decimals. Missing prices leave token amounts available and USD totals explicitly partial. Keep a previous in-memory snapshot when a refresh fails, with its last-successful-update status. Unavailable ownership/discovery does not become an empty portfolio. Updated timestamps do not imply continuous polling. Attention filtering and value/fee sorting apply only to loaded positions and never alter summary totals.
+
+## Interaction and accessibility
+
+Use semantic forms, visible focus, a skip link, screen-reader readable figures and textual notices. Settings and Details use native HTML dialogs with focus containment, Escape dismissal, labelled headings and focus return. Cancelling Settings restores wallet/key/provider edits; appearance applies immediately. Keys remain session-only. Showing the portfolio focuses its region. Controls remain usable without hover. System/light/dark appearance follows OS changes in system mode; the choice is not persisted yet.
+
+Wallet address and resumable v4 discovery live in browser storage. The Infura key is sent only to its RPC endpoint. The public alternative identifies dRPC and its limits. Pause aborts pending requests and retry waits. A refresh is bounded to 120 completed log windows; notices and Refresh explain resuming partial progress. Storage failures, archive restrictions and lagging nodes stay explicit. Data & privacy contains storage details, scan reset and Forget API key.
+
+Screenshots in `screenshots/` contain only fictional demo data and blank credential inputs. History, transactions/Collect, additional networks and production hosting remain separate milestones.

@@ -4,7 +4,7 @@ Checked on 2026-11-15. Evidence below uses public chain samples and fictional de
 
 ## Deterministic checks
 
-- `npm test`: 22 passing tests. Native parity cases cover uint256 subtraction/wraparound, high fee-growth accumulators and Q128 flooring, signed v4 packed ticks, pool IDs, holdings with token decimal scaling, quote orientation, lower-inclusive/upper-exclusive range boundaries, near-edge/full-range states, zero/dust and unavailable prices/reads.
+- `npm test`: 31 passing tests. Native parity cases cover uint256 subtraction/wraparound, high fee-growth accumulators and Q128 flooring, signed v4 packed ticks, pool IDs, holdings with token decimal scaling, quote orientation, lower-inclusive/upper-exclusive range boundaries, near-edge/full-range states, zero/dust and unavailable prices/reads.
 - Encoded RPC/Multicall fixtures exercise complete v3 + v4 loading at a fixed block, owner-origin v3 `collect` simulation, partial snapshots, failed fee/metadata/ownership reads, price fallback/cache, range shrinking without gaps, 120-window work bounds, saved checkpoints/reorg overlap, lagging nodes, corrupt/quota-limited storage, retries, cancellation and sanitized errors.
 - Browser-global fetch receiver regression covers both RPC and price requests. The in-app WebKit browser exposed this issue during real reads; default transports now bind the global fetch function explicitly.
 - `npm run check:brand`: all four vendored assets/tokens/guide match SHA-256 hashes at brand commit `dc734b0513d7a642bf2bc37f391115e942daa8c7`.
@@ -47,3 +47,16 @@ Screenshots contain fictional demo data and blank address/credential inputs:
 - Personal Infura credentials and a project's allowed-origin/archive configuration were not supplied for this run. The Infura input/path, memory-only key handling and redacted failure behaviour are implemented; a live credentialed Infura check remains a user-project configuration check before release.
 
 This is a local read-only Ethereum prototype. Multichain support, saved portfolio history, transaction signing/Collect, production hosting, response security headers and a release are separate roadmap milestones.
+
+## First native-parity task (#8)
+
+Native baseline: `7c1e0ab22bc952626d7dd18de14645c07ecacad6`, especially TokenPairAvatar, TokenIconStore, NetworkIconStore, PositionPresentation and their tests. Added cached original artwork, native glyph colours, accurate dust/unpriced labels, native price precision, explicit clamped marker accessibility and measured/wrapping price labels. Token values below the native six-decimal display precision keep an explicit <0.000001 guard. No financial loader, account or transaction behaviour changes.
+
+`npm test` now covers 31 deterministic cases, including artwork identity/deduplication/positive and negative caches/allowed destinations, pinned demo image hashes, native labels/precision, clamped range and measured label centres. Build, pinned shared-brand hashes and documentation links are checked separately.
+
+WebKit loaded all three real public artwork sources into decoded images through the credential-free fetch/cache path. The development-only `/tests/presentation.html` fixture includes oversized quote symbols, dust, failed reads and full range. At 320px with 200% financial text, the document width matched the viewport and both price badges stayed horizontally and vertically within their tracks. The same states were inspected in light/dark mode. Normal demo prices retained one-line labels at 320px. This fixture is not the application route and is excluded from the production bundle.
+
+- [Enlarged text](screenshots/presentation-large-text.jpg)
+- [Dark edge cases](screenshots/presentation-edge-dark.jpg)
+
+Remaining networks, saved wallets/list controls, full Details/pool stats, history/returns, motion, runtime controls and Collect are tracked explicitly in the [parity checklist](NATIVE_PARITY.md).

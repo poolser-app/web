@@ -57,14 +57,12 @@ p, h1, h2, h3 { margin: 0; }
 .position.unknown { --statusTint: var(--unknown-tint); --statusBackground: var(--unknown-background); --statusBand: var(--unknown-bandFill); --statusEdge: var(--unknown-bandEdge); }
 .position-header { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
 .position-identity { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.token-pair { display: flex; position: relative; padding-right: 4px; flex-shrink: 0; }
-.token-icon { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--card); box-shadow: 0 0 0 1px var(--hairline); }
-.token-icon + .token-icon { margin-left: -10px; }
-.token-icon.eth { background: #F1F2F8; }
-.token-icon.usdc { background: #2775CA; }
-.token-icon.generic { background: var(--control); font: 600 11px "Avenir Next", system-ui, sans-serif; }
-.token-icon svg { width: 26px; height: 26px; }
-.chain-icon { position: absolute; bottom: -4px; right: -2px; display: grid; place-items: center; height: 15px; width: 15px; background: #627EEA; color: white; border: 1px solid var(--card); border-radius: 50%; font-size: 10px; }
+.token-pair { position: relative; width: 44px; height: 30px; flex-shrink: 0; }
+.token-icon { display: grid; place-items: center; position: absolute; top: 0; left: 0; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--card); color: white; font-size: 13px; font-weight: 700; overflow: hidden; }
+.token-icon + .token-icon { left: 14px; }
+.token-icon img { width: 100%; height: 100%; background: white; object-fit: cover; border-radius: 50%; }
+.chain-icon { position: absolute; top: 14px; left: 28px; display: grid; place-items: center; width: 16px; height: 16px; border: 1.5px solid var(--card); border-radius: 4.5px; background: var(--control); color: var(--secondaryText); font-size: 8px; font-weight: 600; overflow: hidden; }
+.chain-icon img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 3px; }
 .pair { font: 600 18px "Avenir Next", Avenir, system-ui, sans-serif; letter-spacing: -.25px; overflow-wrap: anywhere; }
 .caption { font-size: 12px; color: var(--secondaryText); margin-top: 2px; line-height: 1.5; }
 .position-value { text-align: right; margin-left: auto; min-width: 0; max-width: 100%; }
@@ -77,17 +75,17 @@ p, h1, h2, h3 { margin: 0; }
 .status { display: inline-flex; align-items: center; gap: 5px; color: var(--statusTint); background: var(--statusBackground); padding: 4px 8px; border-radius: 12px; font-size: 11px; }
 .status b { font-size: 8px; }
 .price-label-track { position: relative; height: 34px; margin-top: 9px; font-size: 12px; }
-.price-badge { position: absolute; transform: translateX(-50%); padding: 5px 8px; max-width: 100%; background: var(--barToday); color: var(--onBarToday); border-radius: 7px; font-size: 12px; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.price-badge { width: max-content; position: absolute; transform: translateX(-50%); padding: 5px 8px; max-width: 100%; background: var(--barToday); color: var(--onBarToday); border-radius: 7px; font-size: 12px; font-weight: 650; font-variant-numeric: tabular-nums; white-space: normal; overflow-wrap: anywhere; text-align: center; line-height: 1.4; }
 .range-track { height: 22px; position: relative; }
 .range-track::before { content: ''; position: absolute; width: 100%; height: 3px; top: 10px; background: var(--track); border-radius: 9px; }
-.range-band { position: absolute; height: 10px; top: 6px; background: var(--statusBand); border-radius: 20px; }
+.range-band { min-width: 4px; position: absolute; height: 10px; top: 6px; background: var(--statusBand); border-radius: 20px; }
 .range-tick { position: absolute; top: 4px; width: 1px; height: 14px; background: var(--statusEdge); }
 .range-marker { position: absolute; top: 0; height: 22px; width: 3px; border-radius: 4px; background: var(--barToday); }
 .range-bounds { margin-top: 7px; font-size: 12px; color: var(--secondaryText); }
 .range-bounds strong { margin-left: 4px; font-weight: 500; color: var(--primaryText); font-variant-numeric: tabular-nums; }
 .distance { font-size: 12px; color: var(--statusTint); font-weight: 600; margin-top: 10px; }
 .read-errors { padding: 12px 12px 12px 26px; background: var(--outOfRange-background); color: var(--outOfRange-tint); font-size: 12px; line-height: 1.6; border-radius: 10px; margin: 12px 0 0; }
-.position-footer { border-top: 1px solid var(--hairline); margin-top: 14px; padding-top: 10px; display: flex; align-items: center; gap: 24px; }
+.position-footer { border-top: 1px solid var(--hairline); margin-top: 14px; padding-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
 .details-button { display: grid; place-items: center; color: var(--secondaryText); margin-left: auto; background: none; min-height: 36px; min-width: 36px; border-radius: 8px; }
 .details-button svg { width: 17px; height: 17px; }
 .empty-positions { border: 1px solid var(--cardLine); border-radius: 18px; padding: 28px; text-align: center; font-size: 13px; line-height: 1.7; }
@@ -176,3 +174,4 @@ dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
   .position-header { flex-direction: column; }
   .position-value { margin-left: 0; text-align: left; }
 }
+.range-heading > span:first-child { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }

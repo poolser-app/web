@@ -68,7 +68,7 @@ export function range(p: Pick<Position, 'token0' | 'token1' | 'lower' | 'upper' 
       title = f < .03 ? (inverted ? 'Near max' : 'Near min') : f > .97 ? (inverted ? 'Near min' : 'Near max') : 'In range';
     }
   }
-  let bandStart = 0, bandEnd = 1, marker: number | null = null;
+  let bandStart = 0, bandEnd = 1, marker: number | null = null, clamped = false;
   if (p.tick !== null) {
     const span = Math.max(p.upper - p.lower, 1);
     let lo = Math.max(Math.min(p.lower, p.tick), p.lower - 1.5 * span);
@@ -76,6 +76,8 @@ export function range(p: Pick<Position, 'token0' | 'token1' | 'lower' | 'upper' 
     const padding = (hi - lo) * .1; lo -= padding; hi += padding;
     bandStart = full ? 0 : (p.lower - lo) / (hi - lo);
     bandEnd = full ? 1 : (p.upper - lo) / (hi - lo);
+    const rawMarker = full ? (p.tick - p.lower) / span : (p.tick - lo) / (hi - lo);
+    clamped = !full && (rawMarker < 0 || rawMarker > 1);
     marker = Math.min(1, Math.max(0, full ? (p.tick - p.lower) / span : (p.tick - lo) / (hi - lo)));
     if (inverted) { [bandStart, bandEnd] = [1 - bandEnd, 1 - bandStart]; marker = 1 - marker; }
   }
@@ -87,7 +89,7 @@ export function range(p: Pick<Position, 'token0' | 'token1' | 'lower' | 'upper' 
     const pct = Math.expm1(exponent) * 100;
     distance = exponent > Math.log(1000) ? `far ${direction}` : `${pct.toFixed(pct >= 100 ? 0 : 1)}% ${direction}`;
   }
-  return { base, quote, status, title, bandStart, bandEnd, marker, distance,
+  return { base, quote, inverted, status, title, bandStart, bandEnd, marker, clamped, distance,
     min: full ? 0 : hasDecimals ? Math.min(price(p.lower), price(p.upper)) : null,
     max: full ? Infinity : hasDecimals ? Math.max(price(p.lower), price(p.upper)) : null,
     current: p.tick !== null && hasDecimals ? price(p.tick) : null };
@@ -97,8 +99,8 @@ export function formatPrice(n: number | null): string {
   if (n === null || Number.isNaN(n)) return '—';
   if (!Number.isFinite(n)) return '∞';
   if (n === 0) return '0';
-  if (n < 1e-6 || n >= 1e9) return n.toExponential(2);
-  return n.toLocaleString('en-US', n >= 1000 ? { maximumFractionDigits: 0 } : n >= 1 ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : { maximumSignificantDigits: 4 });
+  if (n < 1e-6 || n >= 1e9) return n.toExponential(2).replace(/(e[+-])(\d)$/, (_match, sign, digit) => `${sign}0${digit}`);
+  return n.toLocaleString('en-US', n >= 1000 ? { maximumFractionDigits: 0 } : n >= 1 ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : { minimumSignificantDigits: 4, maximumSignificantDigits: 4 });
 }
 
 export function usd(n: number | null): string {
@@ -106,3 +108,25 @@ export function usd(n: number | null): string {
   if (n > 0 && n < .01) return '<$0.01';
   return n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
+
+export function tokenAmount(value: number | null): string {
+  if (value === null || !Number.isFinite(value)) return '—';
+  // Keep positive token dust explicit instead of rounding a known balance to zero.
+  if (value > 0 && value < 1e-6) return '<0.000001';
+  return value.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 6 });
+}
+
+export function unclaimedLabel(p: Pick<Position, 'fees0' | 'fees1' | 'feesUSD' | 'token0' | 'token1'>): string {
+  if (p.fees0 === null || p.fees1 === null) return 'Fees unavailable';
+  if (p.fees0 === 0 && p.fees1 === 0 && (p.feesUSD === null || p.feesUSD === 0)) return 'No unclaimed fees';
+  if (p.feesUSD !== null) return p.feesUSD >= 0 && p.feesUSD < .01 ? '<$0.01 fees' : `+${usd(p.feesUSD)} fees`;
+  return [[p.fees0, p.token0.symbol], [p.fees1, p.token1.symbol]].filter(([amount]) => Number(amount) > 0).map(([amount, symbol]) => `${tokenAmount(Number(amount))} ${symbol}`).join(' + ') || '0';
+}
+
+export function priceLabelCenter(marker: number, labelWidth: number, containerWidth: number): number {
+  const width = Math.max(0, containerWidth);
+  const inset = Math.min(Math.max(labelWidth, 0), width) / 2;
+  return Math.min(Math.max(marker * width, inset), width - inset);
+}
+
+export const feeTier = (fee: number) => fee === 0x800000 ? 'dynamic fee' : `${Number((fee / 10000).toPrecision(4))}%`;

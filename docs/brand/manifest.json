@@ -1,0 +1,22 @@
+{
+  "repository": "https://github.com/poolser-app/brand",
+  "revision": "dc734b0513d7a642bf2bc37f391115e942daa8c7",
+  "files": {
+    "public/brand/AppLogo.png": {
+      "source": "assets/AppLogo.png",
+      "sha256": "0a1c888a8106cae021c420f8b202c0ec338ce2ddf042e21d809ff3061c56b93e"
+    },
+    "public/brand/PoolserCharacter.png": {
+      "source": "assets/PoolserCharacter.png",
+      "sha256": "85c1679e2a12914faa1b8f5695eeaf48a0d7eb31904a35f9ec57dd34bcf1abc4"
+    },
+    "src/brand/colors.json": {
+      "source": "tokens/colors.json",
+      "sha256": "a643e49808aaf90406523bdd573c59b2fe703936d5ecc477c0fe5a0034e278f5"
+    },
+    "docs/brand/BRAND.md": {
+      "source": "BRAND.md",
+      "sha256": "ef02ff26ad390654282d7d9537039a19c451286b1ae011619f05380829c0cdaf"
+    }
+  }
+}

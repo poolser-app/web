@@ -1,0 +1,127 @@
+* { box-sizing: border-box; }
+:root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--primaryText); background: var(--popover); font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; min-width: 320px; }
+button, input, select { font: inherit; }
+button, a, summary, select { -webkit-tap-highlight-color: transparent; }
+button, select, summary { cursor: pointer; }
+button:disabled { cursor: wait; opacity: .55; }
+a { color: inherit; text-underline-offset: 3px; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid var(--barToday); outline-offset: 4px; }
+button { border: 0; }
+p, h1, h2, h3 { margin: 0; }
+.app-shell { max-width: 1280px; margin: auto; padding: 0 40px; }
+.app-header { height: 116px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--cardLine); margin-bottom: 40px; }
+.wordmark { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font: 600 28px "Avenir Next", Avenir, system-ui, sans-serif; letter-spacing: -.8px; }
+.wordmark img { object-fit: contain; }
+.header-tools { display: flex; align-items: center; gap: 20px; }
+.network-badge { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; color: var(--secondaryText); }
+.network-badge i { width: 7px; height: 7px; border-radius: 50%; background: var(--fees); }
+.theme-select select { color: var(--secondaryText); background: transparent; border: 1px solid var(--cardLine); border-radius: 20px; padding: 8px 12px; font-size: 12px; min-height: 36px; }
+.workspace { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 48px; align-items: start; }
+.connection { padding: 4px 0; }
+.eyebrow { text-transform: uppercase; font-size: 10px; letter-spacing: 1.6px; font-weight: 650; color: var(--secondaryText); }
+.connection-intro h2 { font: 600 30px/1.2 "Avenir Next", Avenir, system-ui, sans-serif; letter-spacing: -.9px; margin: 14px 0 16px; }
+.connection-intro > p:last-child { font-size: 14px; line-height: 1.65; color: var(--secondaryText); margin-bottom: 28px; }
+form label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 9px; }
+form input { display: block; width: 100%; height: 46px; border: 1px solid var(--cardLine); border-radius: 12px; background: var(--card); padding: 0 12px; color: var(--primaryText); min-width: 0; }
+#wallet { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+input::placeholder { color: var(--secondaryText); opacity: .8; }
+.field-note { font-size: 11px; line-height: 1.5; color: var(--secondaryText); margin: 8px 0 22px; }
+.provider-option { display: flex; align-items: center; gap: 8px; color: var(--secondaryText); font-size: 11px; font-weight: 400; margin: -4px 0 20px; min-height: 24px; }
+.provider-option input { width: 15px; height: 15px; margin: 0; accent-color: var(--fees); }
+.primary-button, .secondary-button { min-height: 46px; width: 100%; border-radius: 12px; padding: 12px 16px; font-size: 13px; font-weight: 600; }
+.primary-button { display: flex; align-items: center; justify-content: space-between; color: var(--onStrong); background: var(--strong); }
+.primary-button span { font-size: 18px; font-weight: 400; }
+.secondary-button { margin-top: 8px; color: var(--primaryText); background: transparent; border: 1px solid var(--cardLine); }
+.form-error { color: var(--outOfRange-tint); background: var(--outOfRange-background); border-radius: 12px; font-size: 13px; line-height: 1.6; margin-top: 16px; padding: 12px; overflow-wrap: anywhere; }
+.load-status { font-size: 12px; line-height: 1.6; color: var(--secondaryText); }
+.load-status:not(:empty) { padding-top: 16px; }
+.load-status progress { width: 100%; height: 5px; margin: 10px 0 4px; accent-color: var(--fees); }
+.load-status small { display: block; font-size: 10px; }
+.connection-footnote { border-top: 1px solid var(--cardLine); padding-top: 22px; margin-top: 28px; color: var(--secondaryText); font-size: 11px; line-height: 1.7; }
+.connection-footnote p + p { margin-top: 12px; }
+.connection-footnote strong { color: var(--primaryText); font-weight: 500; }
+.text-button { display: inline-block; background: transparent; color: var(--secondaryText); padding: 12px 0; margin-right: 12px; font-size: 11px; text-decoration: underline; text-underline-offset: 3px; min-height: 40px; }
+.portfolio { min-width: 0; }
+.welcome, .portfolio-summary { position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--cardLine); border-radius: 20px; }
+.crest { height: 62px; position: absolute; top: 0; left: 0; right: 0; pointer-events: none; }
+.crest svg { display: block; width: 100%; height: 100%; }
+.eyes { display: flex; position: absolute; left: 24px; top: 7px; gap: 2.742px; width: 48px; height: 28.526px; }
+.eyes i { display: block; width: 22.629px; height: 28.526px; border-radius: 50%; background-image: url('/brand/PoolserCharacter.png'); background-size: 70.217px 70.217px; background-position: -10.971px -20.983px; }
+.eyes i + i { background-position: -36.343px -20.983px; }
+.welcome { padding: 110px 48px 36px; min-height: 590px; }
+.welcome h1 { font: 600 clamp(36px, 4.2vw, 54px)/1.12 "Avenir Next", Avenir, system-ui, sans-serif; letter-spacing: -2px; margin: 18px 0 24px; }
+.welcome > p:not(.eyebrow) { max-width: 420px; color: var(--secondaryText); font-size: 16px; line-height: 1.7; }
+.welcome-example { padding: 25px 0 35px; margin-top: 35px; border-top: 1px solid var(--hairline); }
+.welcome-example > div { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+.welcome-example p { color: var(--secondaryText); font-size: 13px; line-height: 1.7; max-width: 380px; }
+.welcome-dot { height: 7px; width: 7px; border: 1px solid var(--fees); border-radius: 50%; }
+.welcome-bottom { display: flex; flex-wrap: wrap; gap: 24px; color: var(--secondaryText); font-size: 11px; }
+.portfolio-summary { padding: 82px 28px 22px; }
+.summary-heading { display: flex; align-items: start; gap: 12px; justify-content: space-between; }
+.summary-heading h1 { font: 600 25px "Avenir Next", Avenir, system-ui, sans-serif; margin-top: 7px; letter-spacing: -.7px; }
+.read-status { font-size: 10px; line-height: 1.5; color: var(--fees); background: var(--inRange-background); padding: 5px 9px; border-radius: 12px; }
+.read-status.stale { color: var(--nearEdge-tint); background: var(--nearEdge-background); }
+.summary-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 28px; margin-top: 28px; }
+.summary-metrics p { font-size: 12px; color: var(--secondaryText); margin-bottom: 7px; }
+.summary-metrics strong { display: block; font: 600 clamp(28px, 3vw, 37px)/1.2 "Avenir Next", Avenir, system-ui, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: -1.1px; white-space: nowrap; overflow-x: auto; }
+.summary-metrics small { display: block; font-size: 10px; line-height: 1.5; color: var(--secondaryText); margin-top: 8px; }
+.fee-amount { color: var(--fees); }
+.summary-note { border-top: 1px solid var(--hairline); padding-top: 16px; margin-top: 22px; font-size: 10px; color: var(--secondaryText); line-height: 1.6; }
+.notices { margin-top: 16px; color: var(--secondaryText); font-size: 12px; line-height: 1.6; border-left: 2px solid var(--nearEdge-tint); padding-left: 12px; }
+.notices p + p { margin-top: 8px; }
+.section-heading { display: flex; align-items: baseline; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin: 28px 0 14px; }
+.section-heading h2 { font-size: 15px; font-weight: 600; }
+.caption { font-size: 10px; color: var(--secondaryText); line-height: 1.7; }
+.caption span { margin: 0 3px; }
+.caption strong { font-weight: 500; }
+.positions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+.position { --statusTint: var(--inRange-tint); --statusBackground: var(--inRange-background); --statusBand: var(--inRange-bandFill); border: 1px solid var(--cardLine); border-radius: 18px; background: var(--card); padding: 20px; min-width: 0; }
+.position.outOfRange { --statusTint: var(--outOfRange-tint); --statusBackground: var(--outOfRange-background); --statusBand: var(--outOfRange-bandFill); }
+.position.nearEdge { --statusTint: var(--nearEdge-tint); --statusBackground: var(--nearEdge-background); --statusBand: var(--nearEdge-bandFill); }
+.position.fullRange { --statusTint: var(--fullRange-tint); --statusBackground: var(--fullRange-background); --statusBand: var(--fullRange-bandFill); }
+.position.unknown { --statusTint: var(--unknown-tint); --statusBackground: var(--unknown-background); --statusBand: var(--unknown-bandFill); }
+.position-header { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.pair { font: 600 20px "Avenir Next", Avenir, system-ui, sans-serif; letter-spacing: -.4px; overflow-wrap: anywhere; }
+.position-header .caption { margin-top: 5px; }
+.position-value { text-align: right; flex-shrink: 0; max-width: 52%; }
+.position-value > strong { display: block; font: 600 22px "Avenir Next", Avenir, system-ui, sans-serif; letter-spacing: -.5px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.position-value > span { display: block; font-size: 11px; line-height: 1.6; margin-top: 3px; overflow-wrap: anywhere; }
+.quiet { color: var(--secondaryText); }
+.range-heading, .current-price, .range-bounds { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.range-heading { align-items: center; font-size: 12px; }
+.status { display: inline-flex; align-items: center; gap: 5px; color: var(--statusTint); background: var(--statusBackground); padding: 4px 8px; border-radius: 12px; font-size: 10px; }
+.status b { font-size: 6px; }
+.current-price { color: var(--secondaryText); font-size: 10px; align-items: center; margin: 16px 0 12px; }
+.current-price strong { font-weight: 500; color: var(--barToday); margin-left: 4px; font-variant-numeric: tabular-nums; }
+.range-track { height: 22px; position: relative; margin: 0 2px; }
+.range-track::before { content: ''; position: absolute; width: 100%; height: 3px; top: 10px; background: var(--track); border-radius: 9px; }
+.range-band { position: absolute; height: 10px; top: 6px; background: var(--statusBand); border-radius: 20px; }
+.range-tick { position: absolute; top: 4px; width: 1px; height: 14px; background: var(--statusTint); }
+.range-marker { position: absolute; top: 0; height: 22px; width: 4px; border-radius: 4px; background: var(--barToday); }
+.range-bounds { margin-top: 8px; font-size: 10px; color: var(--secondaryText); }
+.range-bounds strong { margin-left: 6px; font-weight: 500; color: var(--primaryText); font-variant-numeric: tabular-nums; }
+.distance { font-size: 10px; color: var(--statusTint); margin-top: 12px; }
+.read-errors { padding: 12px 12px 12px 26px; background: var(--outOfRange-background); color: var(--outOfRange-tint); font-size: 11px; line-height: 1.7; border-radius: 10px; margin: 14px 0 0; }
+.position-footer { border-top: 1px solid var(--hairline); margin-top: 20px; padding-top: 12px; display: flex; align-items: start; justify-content: space-between; gap: 16px; font-size: 10px; }
+.position-footer details { flex: 1; min-width: 0; }
+.position-footer summary { color: var(--secondaryText); padding: 5px 0; min-height: 28px; }
+.position-footer a { padding: 5px 0; white-space: nowrap; min-height: 28px; }
+dl { margin: 10px 0 0; font-size: 10px; }
+dl > div { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; margin-top: 7px; }
+dt { color: var(--secondaryText); }
+dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.empty-positions { border: 1px solid var(--cardLine); border-radius: 18px; padding: 28px; font-size: 13px; line-height: 1.7; }
+.empty-positions h3 { font-size: 15px; margin-bottom: 8px; }
+.empty-positions p { color: var(--secondaryText); }
+.app-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--cardLine); margin: 48px 0 0; padding: 22px 0 28px; color: var(--secondaryText); font-size: 10px; line-height: 1.7; }
+.app-footer p { flex-basis: 100%; }
+.skip-link { position: fixed; top: 12px; left: 12px; z-index: 10; transform: translateY(-200%); padding: 12px; background: var(--strong); color: var(--onStrong); border-radius: 8px; }
+.skip-link:focus { transform: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (min-width: 1500px) { .app-shell { max-width: 1440px; } .positions { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1000px) { .app-shell { padding: 0 24px; } .workspace { grid-template-columns: 250px minmax(0,1fr); gap: 28px; } .welcome { padding: 100px 28px 28px; } }
+@media (max-width: 740px) { .app-shell { padding: 0 20px; } .app-header { height: 88px; margin-bottom: 28px; } .header-tools { gap: 10px; } .network-badge { font-size: 11px; } .wordmark { font-size: 24px; gap: 5px; } .wordmark img { width: 38px; height: 38px; } .theme-select select { max-width: 112px; padding: 7px; font-size: 10px; } .workspace { grid-template-columns: 1fr; gap: 28px; } .connection-intro h2 br { display: none; } .connection-intro h2 { font-size: 28px; } .connection-intro > p:last-child { margin-bottom: 22px; } .connection-footnote { margin-top: 18px; padding-top: 16px; } .welcome { min-height: 0; padding: 90px 24px 28px; } .welcome h1 { font-size: 38px; letter-spacing: -1.3px; } .welcome-example { margin-top: 24px; padding-bottom: 24px; } .portfolio-summary { padding: 82px 20px 20px; } .summary-heading { flex-wrap: wrap; } .summary-metrics { gap: 14px; } .summary-metrics strong { font-size: 30px; } .app-footer { margin-top: 32px; } }
+@media (max-width: 380px) { .app-shell { padding: 0 14px; } .network-badge { display: none; } .position { padding: 16px; } .position-header { flex-wrap: wrap; } .position-value { text-align: left; max-width: 100%; } .summary-metrics { grid-template-columns: 1fr; gap: 20px; } .pair { font-size: 19px; } }
+@media (prefers-reduced-motion: no-preference) { button, a { transition: opacity .15s ease; } button:not(:disabled):hover, a:hover { opacity: .78; } }

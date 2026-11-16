@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { decodeFunctionData, zeroAddress } from 'viem';
-import { networkById, networks, supportedNetworks, supportsV3, supportsV4, readNetworks, saveNetworks, networkSelectionKey, validSelection, rpcEndpoint } from '../src/networks.ts';
+import { networkById, networks, networkOptions, supportedNetworks, supportsV3, supportsV4, readNetworks, saveNetworks, networkSelectionKey, validSelection, rpcEndpoint } from '../src/networks.ts';
 import { loadNetworks, positionKey } from '../src/monitor.ts';
 import { loadPortfolio, totals } from '../src/portfolio.ts';
 import { Prices, priceAddress } from '../src/prices.ts';
@@ -218,4 +218,24 @@ test('chain-specific multicall splits provider-size failures and falls back to s
     assert.equal(result.positions.length, 1);
     assert.ok(f.calls.filter(c => c.method === 'eth_call').every(c => BigInt(c.params[1] as string) === f.head));
   }
+});
+
+
+test('Blast is excluded from monitoring and saved selections retain other networks without issuing requests', async () => {
+  assert.ok(networks.some(n => n.id === 81457 && supportsV3(n) && supportsV4(n)));
+  assert.equal(supportedNetworks.length, 12);
+  assert.ok(!networkOptions.some(n => n.id === 81457));
+  const storage = memoryStorage();
+  storage.setItem(networkSelectionKey, JSON.stringify([8453, 81457, 56]));
+  assert.deepEqual(readNetworks(storage).ids, [8453, 56]);
+  assert.match(readNetworks(storage).warning!, /Blast is no longer monitored/);
+  storage.setItem(networkSelectionKey, JSON.stringify([81457]));
+  assert.deepEqual(readNetworks(storage).ids, [1]);
+  assert.ok(readNetworks(storage).warning);
+  storage.setItem(networkSelectionKey, JSON.stringify([81457, 81457, 8453]));
+  assert.deepEqual(readNetworks(storage).ids, [1]);
+  assert.throws(() => saveNetworks(storage, [81457]), /Select at least/);
+  let requests = 0;
+  await assert.rejects(loadNetworks({ ...options(), networkIds: [1, 81457], publicRPC: true, key: '', fetcher: async () => { requests++; throw new Error(); } }), /Select at least/);
+  assert.equal(requests, 0);
 });

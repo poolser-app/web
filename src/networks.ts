@@ -142,7 +142,9 @@ export const networks: Network[] = [
 ];
 export const supportsV3 = (n: Network) => n.v3 !== null && n.factory !== null;
 export const supportsV4 = (n: Network) => n.v4 !== null && n.stateView !== null && n.v4Deployment !== null;
-export const supportedNetworks = networks.filter(n => supportsV3(n) || supportsV4(n));
+// Blast stays in the native reference but is excluded from browser monitoring.
+export const networkOptions = networks.filter(n => n.slug !== 'blast');
+export const supportedNetworks = networkOptions.filter(n => supportsV3(n) || supportsV4(n));
 export const networkById = (id: number): Network => {
   const network = networks.find(n => n.id === id);
   if (!network) throw new Error('Unknown network.');
@@ -158,9 +160,12 @@ export function readNetworks(storage: StorageLike | null): { ids: number[]; warn
     if (!storage) throw new Error();
     const raw = storage.getItem(networkSelectionKey);
     if (raw === null) return { ids: [1] };
-    const ids: unknown = JSON.parse(raw);
+    const saved: unknown = JSON.parse(raw);
+    if (Array.isArray(saved) && new Set(saved).size !== saved.length) throw new Error();
+    const removedBlast = Array.isArray(saved) && saved.includes(81457);
+    const ids: unknown = removedBlast ? saved.filter(id => id !== 81457) : saved;
     if (!validSelection(ids)) throw new Error();
-    return { ids };
+    return { ids, ...(removedBlast ? { warning: 'Blast is no longer monitored and was removed from the saved selection. Review Networks before saving.' } : {}) };
   } catch { return { ids: [1], warning: 'Saved networks could not be read. Ethereum is selected; review Networks before saving.' }; }
 }
 export function saveNetworks(storage: StorageLike | null, ids: number[]): string | null {

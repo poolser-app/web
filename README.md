@@ -1,6 +1,6 @@
 # Poolser web
 
-A read-only browser prototype for Uniswap positions on **all 13 native-supported networks**. v3 + v4: Ethereum, Base, Arbitrum, Optimism, Polygon, Blast and Unichain. v3 only: Avalanche, Celo, ZKsync, BSC, MegaETH and Monad. Palm, Linea and Mantle have no supported deployment and cannot be enabled. Load one public wallet to see portfolio value, unclaimed fees, token amounts and labelled price ranges. No wallet connection or account is required. The optional demo uses fictional positions and makes no network requests.
+A read-only browser prototype for Uniswap positions on **12 native-supported networks**. v3 + v4: Ethereum, Base, Arbitrum, Optimism, Polygon and Unichain. v3 only: Avalanche, Celo, ZKsync, BSC, MegaETH and Monad. Blast is excluded from browser monitoring. Palm, Linea and Mantle have no supported deployment and cannot be enabled. Load one public wallet to see portfolio value, unclaimed fees, token amounts and labelled price ranges. No wallet connection or account is required. The optional demo uses fictional positions and makes no network requests.
 
 ## Run locally
 

@@ -1,6 +1,6 @@
 # Supported networks
 
-Source: native [ChainConfig.swift at 2156823](https://github.com/poolser-app/native/blob/215682391bcacc9ccb55f2e051bddd608512b42f/Sources/PoolserKit/ChainConfig.swift), [v3 loader](https://github.com/poolser-app/native/blob/215682391bcacc9ccb55f2e051bddd608512b42f/Sources/PoolserKit/Loading/V3PositionLoader.swift), [v4 loader](https://github.com/poolser-app/native/blob/215682391bcacc9ccb55f2e051bddd608512b42f/Sources/PoolserKit/Loading/V4PositionLoader.swift) and [NetworkIconStore](https://github.com/poolser-app/native/blob/215682391bcacc9ccb55f2e051bddd608512b42f/Sources/PoolserKit/NetworkIconStore.swift). The local reviewed configuration is [src/networks.ts](../src/networks.ts); builds and tests do not need the native checkout. It preserves deployment addresses/blocks, wrappers, Infura host templates, price IDs, original network artwork and Uniswap slugs. Provider availability is separate from protocol capability.
+Source: native [ChainConfig.swift at 2156823](https://github.com/poolser-app/native/blob/215682391bcacc9ccb55f2e051bddd608512b42f/Sources/PoolserKit/ChainConfig.swift), [v3 loader](https://github.com/poolser-app/native/blob/215682391bcacc9ccb55f2e051bddd608512b42f/Sources/PoolserKit/Loading/V3PositionLoader.swift), [v4 loader](https://github.com/poolser-app/native/blob/215682391bcacc9ccb55f2e051bddd608512b42f/Sources/PoolserKit/Loading/V4PositionLoader.swift) and [NetworkIconStore](https://github.com/poolser-app/native/blob/215682391bcacc9ccb55f2e051bddd608512b42f/Sources/PoolserKit/NetworkIconStore.swift). The local reviewed configuration is [src/networks.ts](../src/networks.ts); builds and tests do not need the native checkout. It preserves deployment addresses/blocks, wrappers, Infura host templates, price IDs, original network artwork and Uniswap slugs. Provider availability is separate from protocol capability. Browser monitoring includes 12 networks; Blast is explicitly excluded by product scope while its native deployment configuration remains intact as reference.
 
 | Network | Chain ID | Versions | Native symbol in reference | CoinGecko / DefiLlama | Uniswap slug |
 | --- | ---: | --- | --- | --- | --- |
@@ -9,7 +9,7 @@ Source: native [ChainConfig.swift at 2156823](https://github.com/poolser-app/nat
 | Arbitrum | 42161 | v3 + v4 | ETH | arbitrum-one / arbitrum | arbitrum |
 | Optimism | 10 | v3 + v4 | ETH | optimistic-ethereum / optimism | optimism |
 | Polygon | 137 | v3 + v4 | POL | polygon-pos / polygon | polygon |
-| Blast | 81457 | v3 + v4 | ETH | blast / blast | blast |
+| Blast (reference only; excluded) | 81457 | v3 + v4 | ETH | blast / blast | blast |
 | Avalanche | 43114 | v3 | AVAX | avalanche / avax | avalanche |
 | Celo | 42220 | v3 | CELO | celo / celo | celo |
 | ZKsync | 324 | v3 | ETH | zksync / era | zksync |
@@ -24,11 +24,11 @@ Native v4 currency address zero remains unchanged for PoolId/contract math. Meta
 
 ## Selection and providers
 
-Ethereum is the initial default. Settings saves a nonempty, unique set of supported numeric chain IDs in `poolser:enabled-networks`. Corrupt, empty or unsupported persisted selections produce a visible fallback notice. A storage failure preserves the tab’s selection with a notice. Cancelling Settings restores unsaved selection changes. Network selection does not save a provider key.
+Ethereum is the initial default. Settings omits Blast and saves a nonempty, unique set of the 12 monitored chain IDs in `poolser:enabled-networks`. Corrupt, empty or unsupported persisted selections produce a visible fallback notice. A saved selection containing Blast removes it with a notice while preserving other valid networks; a Blast-only selection falls back visibly to Ethereum for review. A storage failure preserves the tab’s selection with a notice. Cancelling Settings restores unsaved selection changes. Network selection does not save a provider key.
 
 Public endpoints are network-specific dRPC hosts, except `mainnet.megaeth.com/rpc` and `rpc.monad.xyz`. Settings lists the exact host before Save; choosing public RPC never sends the Infura field. Infura uses the native host templates and requires that the user’s project actually allow the selected network/origin and historical access. An endpoint returning the wrong chain ID is rejected before contract, price or discovery reads. See [data flow](PRIVACY.md).
 
-On 2026-11-16 the fictional-address integration check completed on 12 networks. Blast’s public dRPC endpoint answered chain ID but rejected block-number reads; alternate public endpoints were unavailable in this environment. It remains unavailable in the UI, with partial totals, rather than being represented as an empty wallet. A public endpoint may change availability or impose range, CORS, archive or rate limits. [Validation](VALIDATION.md#supported-networks-2) records actual evidence; deterministic fixtures cover all supported configurations independently of these services.
+On 2026-11-16 the fictional-address integration check completed on 12 networks. Blast’s public dRPC endpoint answered chain ID but rejected block-number reads; alternate public endpoints were unavailable in this environment. After explicitly excluding Blast, the 12-network public live matrix passed with complete coverage. Blast is excluded from network selection, selection validation and the live matrix; it no longer affects portfolio completeness. Its existing native configuration remains reference-only. A public endpoint may change availability or impose range, CORS, archive or rate limits. [Validation](VALIDATION.md#supported-networks-2) records actual evidence; deterministic fixtures cover all supported configurations independently of these services.
 
 ## State and work isolation
 

@@ -5,7 +5,7 @@ import { feeTier, formatPrice, priceLabelCenter, range, tokenAmount, unclaimedLa
 import { totals } from './portfolio.ts';
 import { RequestBudget, RpcError } from './rpc.ts';
 import { loadNetworks, positionKey } from './monitor.ts';
-import { networks, networkById, readNetworks, saveNetworks, supportsV3, supportsV4, validSelection } from './networks.ts';
+import { networks, networkOptions, networkById, readNetworks, saveNetworks, supportsV3, supportsV4, validSelection } from './networks.ts';
 import { scanKey } from './discovery.ts';
 import { priceAddress } from './prices.ts';
 import { demoSnapshot } from './demo.ts';
@@ -187,7 +187,7 @@ export default function App() {
     <fieldset><legend>Wallet</legend><label className="sr-only" htmlFor="wallet">Wallet address</label><input id="wallet" value={wallet} onChange={e => setWallet(e.target.value)} placeholder="0x…" spellCheck={false} autoComplete="off" disabled={busy} aria-describedby="wallet-note"/><p id="wallet-note" className="field-note">Public address · no wallet connection</p></fieldset>
     <fieldset><legend>Infura</legend><label className="sr-only" htmlFor="api-key">API key</label><input id="api-key" type="password" value={key} onChange={e => setKey(e.target.value)} autoComplete="off" placeholder="API key" disabled={busy || publicRpc} aria-describedby="key-note"/><p id="key-note" className="field-note">Your key stays in this tab’s memory. Positions are read directly from chain RPC. Enter the key again after a reload.</p>
       <label className="provider-option"><input type="checkbox" checked={publicRpc} onChange={event => setPublicRpc(event.target.checked)} disabled={busy}/> Use public RPC instead</label>{publicRpc && <p className="field-note">The listed public RPC providers receive chain queries. No API key is sent. History scans may be rate-limited or unavailable; each network reports its own status.</p>}</fieldset>
-    <fieldset><legend>Networks</legend><p className="field-note">Select at least one network. Provider access and history limits vary by network.</p><div className="network-options">{networks.map(network => {
+    <fieldset><legend>Networks</legend><p className="field-note">Select at least one network. Provider access and history limits vary by network.</p><div className="network-options">{networkOptions.map(network => {
       const supported = supportsV3(network) || supportsV4(network);
       return <label className="network-option" key={network.id}><input type="checkbox" checked={networkIds.includes(network.id)} disabled={busy || !supported} onChange={event => setNetworkIds(ids => event.target.checked ? [...ids, network.id] : ids.filter(id => id !== network.id))}/><span>{network.name}<small>{supported ? supportsV4(network) ? 'v3 + v4' : 'v3 only' : 'No supported deployment'}{publicRpc && supported && ` · ${network.publicRPC ? new URL(network.publicRPC).hostname : 'Public RPC unavailable'}`}</small></span></label>;
     })}</div></fieldset>

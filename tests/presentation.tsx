@@ -1,9 +1,10 @@
 import { createRoot } from 'react-dom/client';
 import { useState } from 'react';
-import { PositionCard } from '../src/App.tsx';
+import { Portfolio, PositionCard } from '../src/App.tsx';
 import { ethereumArtwork, NetworkAvatar, TokenAvatar } from '../src/Avatar.tsx';
 import { demoSnapshot } from '../src/demo.ts';
 import { applyTheme } from '../src/theme.ts';
+import type { Snapshot } from '../src/types.ts';
 import type { Theme } from '../src/theme.ts';
 import '../src/style.css';
 
@@ -12,6 +13,16 @@ const long = { ...p, id: 'fixture-long', lower: 0, upper: 100, tick: -1000, fees
   token0: { ...p.token0, symbol: 'BASE' }, token1: { ...p.token1, symbol: 'QUOTE_WITH_A_VERY_LONG_SYMBOL_123456789012' } };
 const unknown = { ...p, id: 'fixture-unknown', tick: null, fees0: null, fees1: null, feesUSD: null, valueUSD: null,
   token0: { ...p.token0, decimals: null }, errors: ['Fictional unavailable pool/metadata read.'] };
+const networkSnapshot: Snapshot = {
+  ...demoSnapshot(), complete: false,
+  positions: [{ ...p, id: 'same-fictional-id', chainId: 8453 }, { ...p, id: 'same-fictional-id', chainId: 137, version: 4 }],
+  warnings: ['Polygon: Refresh incomplete. Showing the previous snapshot; values may have changed.', 'BSC: RPC access denied.'],
+  chains: [
+    { chainId: 8453, block: '58094922', updatedAt: 1794808800000, status: 'ready', positions: [], complete: true, warnings: [] },
+    { chainId: 137, block: '97367334', updatedAt: 1794805200000, status: 'stale', positions: [], complete: false, warnings: [] },
+    { chainId: 56, block: null, updatedAt: null, status: 'unavailable', positions: [], complete: false, warnings: [] },
+  ],
+};
 applyTheme('light');
 function Fixtures() {
   const [theme, setTheme] = useState<Theme>('light');
@@ -20,6 +31,7 @@ function Fixtures() {
     <label className="appearance-row">Appearance<select value={theme} onChange={event => { const next = event.target.value as Theme; setTheme(next); applyTheme(next); }}><option value="light">Light</option><option value="dark">Dark</option></select></label>
     <label><input type="checkbox" checked={large} onChange={event => setLarge(event.target.checked)}/> 200% financial text fixture</label>
     <h2>Live public artwork</h2><div className="token-pair" aria-label="Remote WETH and USDC artwork"><TokenAvatar token={p.token1} chainId={1}/><TokenAvatar token={p.token0} chainId={1}/><NetworkAvatar name={ethereumArtwork.name} iconURL={ethereumArtwork.iconURL}/></div>
+    <section id="networks"><h2>Mixed network snapshots</h2><Portfolio snapshot={networkSnapshot}/></section>
     <h2>Oversized price and dust</h2><PositionCard position={long} demo/>
     <h2>Unavailable state</h2><PositionCard position={unknown} demo/>
     <h2>Full range</h2><PositionCard position={{ ...p, id: 'fixture-full', lower: -887220, upper: 887220 }} demo/>

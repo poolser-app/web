@@ -1,10 +1,10 @@
 # Prototype validation
 
-Checked on 2026-11-15. Evidence below uses public chain samples and fictional demo screenshots. No personal Infura key, private wallet configuration, real portfolio screenshot or captured RPC payload is committed.
+Checked on 2026-11-15 and extended on 2026-11-16. Evidence below uses public chain samples and fictional demo screenshots. No personal Infura key, private wallet configuration, real portfolio screenshot or captured RPC payload is committed.
 
 ## Deterministic checks
 
-- `npm test`: 31 passing tests. Native parity cases cover uint256 subtraction/wraparound, high fee-growth accumulators and Q128 flooring, signed v4 packed ticks, pool IDs, holdings with token decimal scaling, quote orientation, lower-inclusive/upper-exclusive range boundaries, near-edge/full-range states, zero/dust and unavailable prices/reads.
+- `npm test`: 43 passing tests (the previous 31 plus 12 network cases). Native parity cases cover uint256 subtraction/wraparound, high fee-growth accumulators and Q128 flooring, signed v4 packed ticks, pool IDs, holdings with token decimal scaling, quote orientation, lower-inclusive/upper-exclusive range boundaries, near-edge/full-range states, zero/dust and unavailable prices/reads.
 - Encoded RPC/Multicall fixtures exercise complete v3 + v4 loading at a fixed block, owner-origin v3 `collect` simulation, partial snapshots, failed fee/metadata/ownership reads, price fallback/cache, range shrinking without gaps, 120-window work bounds, saved checkpoints/reorg overlap, lagging nodes, corrupt/quota-limited storage, retries, cancellation and sanitized errors.
 - Browser-global fetch receiver regression covers both RPC and price requests. The in-app WebKit browser exposed this issue during real reads; default transports now bind the global fetch function explicitly.
 - `npm run check:brand`: all four vendored assets/tokens/guide match SHA-256 hashes at brand commit `dc734b0513d7a642bf2bc37f391115e942daa8c7`.
@@ -46,7 +46,7 @@ Screenshots contain fictional demo data and blank address/credential inputs:
 - Browser contract metadata comes from ERC-20 reads through the selected RPC, avoiding a separate metadata service or token-icon dependency. A failed decimals read never guesses 18.
 - Personal Infura credentials and a project's allowed-origin/archive configuration were not supplied for this run. The Infura input/path, memory-only key handling and redacted failure behaviour are implemented; a live credentialed Infura check remains a user-project configuration check before release.
 
-This is a local read-only Ethereum prototype. Multichain support, saved portfolio history, transaction signing/Collect, production hosting, response security headers and a release are separate roadmap milestones.
+This is a local read-only multichain prototype. Saved portfolio history, transaction signing/Collect, production hosting, response security headers and a release are separate roadmap milestones.
 
 ## First native-parity task (#8)
 
@@ -59,4 +59,41 @@ WebKit loaded all three real public artwork sources into decoded images through 
 - [Enlarged text](screenshots/presentation-large-text.jpg)
 - [Dark edge cases](screenshots/presentation-edge-dark.jpg)
 
-Remaining networks, saved wallets/list controls, full Details/pool stats, history/returns, motion, runtime controls and Collect are tracked explicitly in the [parity checklist](NATIVE_PARITY.md).
+Remaining saved wallets/list controls, full Details/pool stats, history/returns, motion, runtime controls and Collect are tracked explicitly in the [parity checklist](NATIVE_PARITY.md).
+
+
+## Supported networks (#2)
+
+Reference: native `215682391bcacc9ccb55f2e051bddd608512b42f`, including ChainConfig, both position loaders, price/native-symbol mappings, artwork and tests. See the maintained [capability/provider matrix](NETWORKS.md).
+
+- 43 deterministic tests pass, preserving all prior 31. New cases exercise every supported chain at its own fixed block, v3-only exclusions, unsupported deployments, wrong-chain rejection before ownership/discovery, enabled-network validation/storage failure, global serial credit spacing/retries/cancellation, identical NFT IDs across wallet/chain/version, chain-isolated pause/resume cursors, stale snapshot retention/recovery, failed ownership, zero versus unknown, native-symbol/wrapper/platform mapping and ZKsync Multicall splitting/single-read fallback.
+- `npm run build` passes TypeScript and production bundling. `npm run check:brand` verifies the unchanged locally pinned shared identity. The network fixture remains development-only in `/tests/presentation.html#networks` and is excluded from the production build.
+- The existing `npm run test:live` public Ethereum integration check also passed after the network changes, with three funded v3 reference positions and one fully discovered v4 position:
+
+```json
+{"status":"passed","block":"26425756","v3ReferencePositions":3,"v4Positions":1,"complete":true,"positionsWithUSD":1,"priceWarnings":1}
+```
+
+- `npm run test:networks` uses configured public RPCs with a fictional nonzero address, no key and no saved wallet configuration. The final run completed fixed-block ownership reads with known-zero results on 12 chains; Blast was unavailable. The command intentionally exited nonzero for incomplete provider coverage. No wallet, credential, raw RPC response or portfolio capture is stored by this check.
+
+Sanitized observed blocks from that run:
+
+| Network | Block | Status |
+| --- | ---: | --- |
+| Ethereum | 26425711 | ready |
+| Base | 58095734 | ready |
+| Arbitrum | 524668404 | ready |
+| Optimism | 159605372 | ready |
+| Polygon | 97402703 | ready |
+| Blast | unavailable | unavailable |
+| Avalanche | 100453364 | ready |
+| Celo | 82908765 | ready |
+| ZKsync | 72967046 | ready |
+| BSC | 133877446 | ready |
+| MegaETH | 32012513 | ready |
+| Monad | 122666015 | ready |
+| Unichain | 64061165 | ready |
+
+Blast dRPC answered `eth_chainId` (81457) but rejected `eth_blockNumber`. The official/public alternatives checked in this environment were unavailable or denied access. BSC failed transiently in the first run and passed on repeat; this is why capability and provider availability remain separate. These live checks validate connections/deployed ownership reads, not funded positions and historical-log coverage on every chain; encoded funded-position/discovery fixtures cover the complete matrix. No live Infura project was used.
+
+Browser QA used native browser controls against the local Vite server in Dia and Chrome. Base/ZKsync completed independently at blocks 58094922/72967008. A Chrome read of Ethereum, Base, Blast and BSC preserved an explicit Blast unavailable notice and partial/unknown totals while the other chains completed. An empty network selection was rejected; unsupported deployments were disabled and labelled. Reload retained enabled networks and the fictional wallet, cleared a fictional unsubmitted key, and did not retain portfolio data. Settings Cancel/Escape restored network edits. The fictional mixed ready/stale/unavailable fixture showed the original chain block/time, partial totals and stale card captions/accessibility names. Light/dark and a 375px iPhone SE viewport with 200% financial text were inspected; stale captions wrapped without losing their labels or amounts. A broader browser/screen-reader/contrast matrix remains part of release acceptance (#6); no such full-matrix claim is made here.

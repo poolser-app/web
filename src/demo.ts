@@ -5,7 +5,7 @@ import type { Position, Snapshot, Token } from './types.ts';
 const usdc: Token = { address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', symbol: 'USDC', decimals: 6, price: 1 };
 const eth: Token = { address: chain.wrappedNative, symbol: 'WETH', decimals: 18, price: 3200 };
 const sample = (version: 3 | 4, lowerPrice: number, upperPrice: number): Position => ({
-  id: `demo-${version}`, version, token0: usdc, token1: eth, fee: 500,
+  id: `demo-${version}`, chainId: 1, version, token0: usdc, token1: eth, fee: 500,
   lower: Math.round(Math.log(1e12 / upperPrice) / Math.log(1.0001)), upper: Math.round(Math.log(1e12 / lowerPrice) / Math.log(1.0001)),
   tick: Math.round(Math.log(1e12 / 3200) / Math.log(1.0001)), liquidity: '1000000000000000000',
   amount0: version === 3 ? 4200 : 1600, amount1: version === 3 ? 1.5 : 0,

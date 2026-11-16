@@ -2,18 +2,9 @@ import { parseAbi } from 'viem';
 
 export const publicProvider = { name: 'dRPC', url: 'https://eth.drpc.org' } as const;
 
-// Same Ethereum deployments as native/ChainConfig.swift; checked against Uniswap's deployments.
-export const chain = {
-  id: 1,
-  name: 'Ethereum',
-  v3: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
-  factory: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
-  v4: '0xbd216513d74c8cf14cf4747e6aaa6420ff64ee9e',
-  stateView: '0x7ffe42c4a5deea5b0fec41c94c136cf115597227',
-  multicall: '0xcA11bde05977b3631167028862bE2a173976CA11',
-  wrappedNative: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-  v4Deployment: 0x14af301n,
-} as const;
+import { ethereum } from './networks.ts';
+
+export const chain = { ...ethereum, v3: ethereum.v3!, factory: ethereum.factory!, v4: ethereum.v4!, stateView: ethereum.stateView!, multicall: ethereum.multicall!, v4Deployment: ethereum.v4Deployment! };
 
 export const nftAbi = parseAbi([
   'function balanceOf(address owner) view returns (uint256)',

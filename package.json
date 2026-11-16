@@ -12,7 +12,8 @@
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --test tests/*.test.ts",
     "test:live": "node scripts/live-check.ts",
-    "check:brand": "node scripts/check-brand.ts"
+    "check:brand": "node scripts/check-brand.ts",
+    "test:networks": "node scripts/network-check.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

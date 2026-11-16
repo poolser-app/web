@@ -1,6 +1,7 @@
 import { decodeFunctionResult, encodeFunctionData, toHex } from 'viem';
 import type { Abi, Address, Hex } from 'viem';
 import { chain, multicallAbi } from './contracts.ts';
+import type { Network } from './networks.ts';
 
 export class RpcError extends Error {
   kind: 'revert' | 'range' | 'transient' | 'access' | 'invalid';
@@ -17,20 +18,38 @@ export function delay(ms: number, signal?: AbortSignal): Promise<void> {
   });
 }
 
+export class RequestBudget {
+  private nextAt = 0;
+  private queue: Promise<void> = Promise.resolve();
+  private creditsPerSecond: number;
+  constructor(creditsPerSecond = 400) { this.creditsPerSecond = creditsPerSecond; }
+  async run<T>(credits: number, signal: AbortSignal, work: () => Promise<T>): Promise<T> {
+    let release!: () => void;
+    const previous = this.queue;
+    this.queue = new Promise<void>(resolve => { release = resolve; });
+    try {
+      await previous;
+      await delay(Math.max(0, this.nextAt - Date.now()), signal);
+      this.nextAt = Date.now() + credits / this.creditsPerSecond * 1000;
+      aborted(signal);
+      return await work();
+    } finally { release(); }
+  }
+}
+
 export class Rpc {
   private endpoint: string;
   signal: AbortSignal;
   private fetcher: typeof fetch;
-  private nextAt = 0;
   private queue: Promise<void> = Promise.resolve();
   private id = 0;
-  private budget: number;
+  private budget: RequestBudget;
 
-  constructor(endpoint: string, signal: AbortSignal, options: { fetcher?: typeof fetch; creditsPerSecond?: number } = {}) {
+  constructor(endpoint: string, signal: AbortSignal, options: { fetcher?: typeof fetch; creditsPerSecond?: number; budget?: RequestBudget } = {}) {
     this.endpoint = endpoint;
     this.signal = signal;
     this.fetcher = options.fetcher ?? globalThis.fetch.bind(globalThis);
-    this.budget = options.creditsPerSecond ?? 400;
+    this.budget = options.budget ?? new RequestBudget(options.creditsPerSecond);
   }
 
   async request<T>(method: 'eth_call' | 'eth_getLogs' | 'eth_blockNumber' | 'eth_chainId', params: unknown[] = []): Promise<T> {
@@ -41,9 +60,7 @@ export class Rpc {
       await previous;
       for (let attempt = 0; ; attempt++) {
         aborted(this.signal);
-        await delay(Math.max(0, this.nextAt - Date.now()), this.signal);
-        this.nextAt = Date.now() + (method === 'eth_getLogs' ? 255 : 80) / this.budget * 1000;
-        try { return await this.send<T>(method, params); }
+        try { return await this.budget.run(method === 'eth_getLogs' ? 255 : 80, this.signal, () => this.send<T>(method, params)); }
         catch (error) {
           aborted(this.signal);
           if (!(error instanceof RpcError) || error.kind !== 'transient' || attempt >= 3) throw error;
@@ -101,7 +118,8 @@ const decoded = (c: Call, data: Hex) => decodeFunctionResult({ abi: c.abi, funct
 export class Reader {
   rpc: Rpc;
   block: bigint;
-  constructor(rpc: Rpc, block: bigint) { this.rpc = rpc; this.block = block; }
+  chain: Network;
+  constructor(rpc: Rpc, block: bigint, network: Network = chain) { this.rpc = rpc; this.block = block; this.chain = network; }
 
   async one<T>(c: Call, from?: Address): Promise<T> {
     const data = await this.rpc.request<Hex>('eth_call', [{ to: c.to, data: encoded(c), ...(from ? { from } : {}) }, toHex(this.block)]);
@@ -117,8 +135,16 @@ export class Reader {
 
   private async chunk(calls: Call[]): Promise<ReadResult[]> {
     if (!calls.length) return [];
+    if (!this.chain.multicall) {
+      const results: ReadResult[] = [];
+      for (const c of calls) {
+        try { results.push({ ok: true, value: await this.one(c) }); }
+        catch (error) { aborted(this.rpc.signal); results.push({ ok: false, error: error instanceof RpcError ? error : new RpcError('Read unavailable.', 'invalid') }); }
+      }
+      return results;
+    }
     try {
-      const data = await this.one<readonly { success: boolean; returnData: Hex }[]>(call(chain.multicall, multicallAbi, 'aggregate3', [calls.map(c => ({ target: c.to, allowFailure: true, callData: encoded(c) }))]));
+      const data = await this.one<readonly { success: boolean; returnData: Hex }[]>(call(this.chain.multicall!, multicallAbi, 'aggregate3', [calls.map(c => ({ target: c.to, allowFailure: true, callData: encoded(c) }))]));
       if (data.length !== calls.length) throw new RpcError('Incomplete multicall response.', 'invalid');
       return data.map((item, index) => {
         if (!item.success) return { ok: false, error: new RpcError('Contract read reverted.', 'revert') };

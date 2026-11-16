@@ -2,6 +2,7 @@ import { decodeFunctionData, encodeFunctionResult, pad, toHex, zeroAddress } fro
 import type { Abi, Address, Hex } from 'viem';
 import { chain, nftAbi, v3Abi, factoryAbi, poolAbi, tokenAbi, v4Abi, stateAbi, multicallAbi, transferTopic } from '../src/contracts.ts';
 import { Q128 } from '../src/math.ts';
+import type { Network } from '../src/networks.ts';
 import type { StorageLike } from '../src/types.ts';
 
 export const wallet: Address = '0x0000000000000000000000000000000000001234';
@@ -17,9 +18,10 @@ export function memoryStorage(): StorageLike & { entries: Map<string, string> } 
   return { entries, getItem: key => entries.get(key) ?? null, setItem: (key, value) => { entries.set(key, value); }, removeItem: key => { entries.delete(key); } };
 }
 
-export function fixture(options: { collectFails?: boolean; decimalsFail?: boolean; ownerFails?: boolean; maximumLogRange?: bigint; head?: bigint; logHook?: (from: bigint, to: bigint) => void } = {}) {
+export function fixture(options: { chain?: Network; balanceFailsFor?: 3 | 4; maximumBatch?: number; empty?: boolean; nativeV3?: boolean; collectFails?: boolean; decimalsFail?: boolean; ownerFails?: boolean; maximumLogRange?: bigint; head?: bigint; logHook?: (from: bigint, to: bigint) => void } = {}) {
+  const network = options.chain ?? chain;
   const calls: { method: string; params: unknown[] }[] = [];
-  const head = options.head ?? chain.v4Deployment + 100n;
+  const head = options.head ?? (network.v4Deployment ?? 100n) + 100n;
   const dispatch = (to: Address, data: Hex, from?: Address): Hex => {
     const decoded = decodeFunctionData({ abi: abis, data });
     const args = (decoded.args ?? []) as readonly unknown[];
@@ -30,10 +32,10 @@ export function fixture(options: { collectFails?: boolean; decimalsFail?: boolea
         try { return { success: true, returnData: dispatch(item.target, item.callData) }; }
         catch { return { success: false, returnData: '0x' }; }
       }); break;
-      case 'balanceOf': result = 1n; break;
+      case 'balanceOf': if (to.toLowerCase() === (options.balanceFailsFor === 3 ? network.v3 : options.balanceFailsFor === 4 ? network.v4 : null)?.toLowerCase()) return '0x'; result = options.empty ? 0n : 1n; break;
       case 'ownerOf': if (options.ownerFails) return '0x'; result = wallet; break;
       case 'tokenOfOwnerByIndex': result = 1n; break;
-      case 'positions': result = [0n, zeroAddress, usdc, weth, 500, 190000, 210000, 10n ** 16n, 0n, 0n, 0n, 0n]; break;
+      case 'positions': result = [0n, zeroAddress, options.nativeV3 ? zeroAddress : usdc, weth, 500, 190000, 210000, 10n ** 16n, 0n, 0n, 0n, 0n]; break;
       case 'collect': if (options.collectFails || from !== wallet) throw new Error('revert'); result = [0n, 0n]; break;
       case 'getPool': result = pool; break;
       case 'slot0': result = [sqrtAt(200000), 200000, 0, 0, 0, 0, true]; break;
@@ -50,20 +52,22 @@ export function fixture(options: { collectFails?: boolean; decimalsFail?: boolea
     return encodeFunctionResult({ abi: abis, functionName: name, result });
   };
   const fetcher: typeof fetch = async (input, init) => {
-    if (String(input).startsWith('https://api.coingecko.com')) return Response.json({ [usdc]: { usd: 1 }, [weth]: { usd: 3200 }, [chain.wrappedNative.toLowerCase()]: { usd: 3200 } });
+    if (String(input).startsWith('https://api.coingecko.com')) return Response.json({ [usdc]: { usd: 1 }, [weth]: { usd: 3200 }, [network.wrappedNative.toLowerCase()]: { usd: 3200 } });
     if (String(input).startsWith('https://coins.llama.fi')) return Response.json({ coins: {} });
     const { id, method, params } = JSON.parse(String(init?.body));
     calls.push({ method, params });
     let result: unknown;
-    if (method === 'eth_chainId') result = '0x1';
+    if (method === 'eth_chainId') result = toHex(network.id);
     else if (method === 'eth_blockNumber') result = toHex(head);
     else if (method === 'eth_getLogs') {
       const [filter] = params;
       const from = BigInt(filter.fromBlock), to = BigInt(filter.toBlock);
       options.logHook?.(from, to);
       if (options.maximumLogRange && to - from + 1n > options.maximumLogRange) return Response.json({ jsonrpc: '2.0', id, error: { code: -32602, message: 'block range exceeds limit' } }, { status: 400 });
-      result = [{ address: chain.v4, topics: [transferTopic, pad(zeroAddress), pad(wallet), toHex(1n, { size: 32 })] }];
+      result = [{ address: network.v4, topics: [transferTopic, pad(zeroAddress), pad(wallet), toHex(1n, { size: 32 })] }];
     } else if (method === 'eth_call') {
+      const decoded = decodeFunctionData({ abi: abis, data: params[0].data });
+      if (options.maximumBatch && decoded.functionName === 'aggregate3' && (decoded.args![0] as unknown[]).length > options.maximumBatch) return Response.json({ jsonrpc: '2.0', id, error: { code: -32602, message: 'gas limit exceeded' } });
       try { result = dispatch(params[0].to, params[0].data, params[0].from); }
       catch { return Response.json({ jsonrpc: '2.0', id, error: { code: 3, message: 'execution reverted' } }); }
     } else throw new Error(`Unexpected RPC method ${method}`);
